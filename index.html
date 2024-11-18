@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta chars et="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fog Layer AQI Alert System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Fog Layer Air Quality Index (AQI) Alert System</h1>
+        <h2 id="alertMessage">Awaiting data from edge devices...</h2>
+    </div>
+
+    <script>
+        // Poll the server every few seconds to get the latest AQI alert status
+        setInterval(function() {
+            $.ajax({
+                url: '/check_aqi',  // Correct URL for AJAX call
+                type: 'GET',
+                success: function(response) {
+                    const alertMessage = $('#alertMessage');
+                    alertMessage.text(response.message);
+                    
+                    // Set message color based on status
+                    if (response.status === 'ALERT') {
+                        alertMessage.css("color", "red");
+                    } else {
+                        alertMessage.css("color", "green");
+                    }
+                },
+                error: function() {
+                    $('#alertMessage').text("Error fetching AQI status.");
+                }
+            });
+        }, 5000); // Poll every 5 seconds
+    </script>
+</body>
+</html>
